@@ -6,35 +6,45 @@ const _ = require('lodash');
 const { randomString, checkPwdLevel } = require('../utils')
 const { secret } = require('../config')
 const AdminModel = require('../models/AdminModel')
+const RoleModel = require('../models/RoleModel')
 const { checkTokenMiddleware } = require('../middleware/checkTokenMiddleware')
 const searchMiddleware = require('../middleware/searchMiddleware')
+const { datetimeToUnix } = require('../moment')
 
 router.post('/login', function(req, res, next) {
   const { username, password } = req.body
-  AdminModel.findOne({username: username}).then(data => {
-    if(data.password != md5(`${password}${data.salt}`)){
+  AdminModel.findOne({username: username}).then(async result => {
+    if(result.password != md5(`${password}${result.salt}`)){
       return res.json({
         code: 20001,
         msg: '账号或密码错误'
       })
     }
+    const hasPermission = await RoleModel.findOne({title: result.role, status: 1})
+    if(!hasPermission){
+      return res.json({
+        code: 20001,
+        msg: '暂无权限访问'
+      })
+    }
     // 1小时过期
     const token = jwt.sign({
-      _id: data._id,
-      username: data.username,
-      password: data.password,
-      date: new Date().getTime(),
-      role: data.role
-    }, secret, { expiresIn: 60 * 600 })
+      _id: result._id,
+      username: result.username,
+      password: result.password,
+      date: datetimeToUnix(),
+      role: result.role
+    }, secret, { expiresIn: 60 * 60 })
+    res.setHeader('authorization', token)
+    res.setHeader('Access-Control-Expose-Headers','authorization')
     res.json({
       code: 20000,
       msg: '登陆成功',
       data: { 
-        token,
-        _id: data._id,
-        username: data.username,
-        role: data.role,
-        avatar: data.avatar
+        _id: result._id,
+        username: result.username,
+        role: result.role,
+        avatar: result.avatar
       }
     })
   }).catch(() => {
@@ -128,17 +138,18 @@ router.post('/', checkTokenMiddleware, async function(req, res, next) {
   req.body.salt = salt
   req.body.password = md5(`${password}${salt}`)
 
-  const info = await AdminModel.create(req.body)
-  if(!info){
-    return res.json({
-      code: 20001,
-      msg: '添加失败'
+  AdminModel.create(req.body).then(result => {
+    res.json({
+      code: 20000,
+      msg: '添加成功',
+      data: info
     })
-  }
-  res.json({
-    code: 20000,
-    msg: '添加成功',
-    data: info
+  }).catch(err => {
+    res.json({
+      code: 20001,
+      msg: '添加失败',
+      data: err
+    })
   })
 });
 router.patch('/', checkTokenMiddleware, async (req, res, next) => {
@@ -161,17 +172,56 @@ router.patch('/', checkTokenMiddleware, async (req, res, next) => {
     const admin = await AdminModel.findOne({username: username})
     req.body.password = md5(`${password}${admin.salt}`)
   }
-  const info = await AdminModel.updateOne({_id: req.body._id}, req.body)
-  if(!info){
+  AdminModel.updateOne({_id: req.body._id}, req.body).then(result => {
+    res.json({
+      code: 20000,
+      msg: '更新成功',
+      data: result
+    })
+  }).catch(err => {
+    res.json({
+      code: 20001,
+      msg: '更新失败',
+      data: err
+    })
+  })
+});
+
+router.patch('/pwd', checkTokenMiddleware, async (req, res, next) => {
+  const _id = req.body._id
+  const password = _.trim(req.body.password)
+  const oldPassword = _.trim(req.body.oldPassword)
+  
+  if([0, 1].includes(checkPwdLevel(password))) {
     return res.json({
       code: 20001,
-      msg: '更新失败'
+      msg: ['密码最少6位', '密码必需包含大小写字母、数字、符号任意两者组合!'][checkPwdLevel(password)]
     })
   }
-  res.json({
-    code: 20000,
-    msg: '更新成功',
-    data: info
+  const admin = await AdminModel.findOne({_id})
+  if(!admin) return res.json({
+    code: 20001,
+    msg: '用户不存在'
+  })
+  const oldPwd = md5(`${oldPassword}${admin.salt}`)
+  const newPwd = md5(`${password}${admin.salt}`)
+  if(oldPwd != admin.password) return res.json({
+    code: 20001,
+    msg: '旧密码错误'
+  })
+
+  AdminModel.updateOne({_id: req.body._id}, {password: newPwd}).then(result => {
+    res.json({
+      code: 20000,
+      msg: '更新成功',
+      data: result
+    })
+  }).catch(err => {
+    res.json({
+      code: 20001,
+      msg: '更新失败',
+      data: err
+    })
   })
 });
 router.delete('/', checkTokenMiddleware, async function(req, res, next) {

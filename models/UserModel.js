@@ -1,4 +1,12 @@
+/*
+ * @Description: 
+ * @Author: Amber
+ * @Date: 2023-06-28 18:17:07
+ * @LastEditTime: 2023-08-20 15:14:04
+ * @LastEditors: Amber
+ */
 const mongoose = require('mongoose')
+const { datetimeToUnix } = require('../moment')
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -19,6 +27,10 @@ const UserSchema = new mongoose.Schema({
   bio: String,
   createAt: Date,
   updateAt: Date,
+}, {
+  timestamps: {
+    currentTime: () => datetimeToUnix()
+  }
 })
 
 const UserModel = mongoose.model('users', UserSchema)

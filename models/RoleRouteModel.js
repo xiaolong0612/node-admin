@@ -2,11 +2,11 @@
  * @Description: 
  * @Author: Amber
  * @Date: 2023-08-09 12:10:18
- * @LastEditTime: 2023-08-13 18:55:13
+ * @LastEditTime: 2023-08-20 15:14:32
  * @LastEditors: Amber
  */
-const { type } = require('express/lib/response')
 const mongoose = require('mongoose')
+const { datetimeToUnix } = require('../moment')
 
 const RoleSchema = new mongoose.Schema({
   role: {
@@ -20,7 +20,10 @@ const RoleSchema = new mongoose.Schema({
   },
   auth: Array
 }, {
-  timestamps: { createdAt: 'createdAt', updatedAt: false }
+  timestamps: {
+    currentTime: () => datetimeToUnix(),
+    updatedAt: false
+  }
 })
 
 const RoleRouteModel = mongoose.model('role_routes', RoleSchema)

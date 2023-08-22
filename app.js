@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: Amber
  * @Date: 2023-06-28 16:15:16
- * @LastEditTime: 2023-08-16 11:23:33
+ * @LastEditTime: 2023-08-21 00:01:52
  * @LastEditors: Amber
  */
 var createError = require('http-errors');
@@ -22,7 +22,11 @@ var rolesRoutesRouter = require('./routes/roles_routes');
 var routersRouter = require('./routes/routers');
 var usersRouter = require('./routes/users');
 var articlesRouter = require('./routes/articles');
+var sysConfigRouter = require('./routes/sys_configs');
 var uploadRouter = require('./routes/upload');
+
+// const redisClient= require('./utils/redis')
+// redisClient.set('test-key-1', 'test-value-1')
 
 var app = express();
 
@@ -41,9 +45,10 @@ app.use('/', indexRouter);
 app.use('/admins', adminsRouter);
 app.use('/roles', rolesRouter);
 app.use('/rolesRoutes', rolesRoutesRouter);
-app.use('/routers', routersRouter.router);
+app.use('/routers', routersRouter);
 app.use('/users', usersRouter);
 app.use('/articles', articlesRouter);
+app.use('/sysConfig', sysConfigRouter);
 app.use('/upload', uploadRouter);
 
 

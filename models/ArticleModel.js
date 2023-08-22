@@ -1,4 +1,12 @@
+/*
+ * @Description: 
+ * @Author: Amber
+ * @Date: 2023-06-30 01:00:59
+ * @LastEditTime: 2023-08-20 15:14:48
+ * @LastEditors: Amber
+ */
 const mongoose = require('mongoose')
+const { datetimeToUnix } = require('../moment')
 
 const ArticleSchema = new mongoose.Schema({
   title: {
@@ -15,11 +23,10 @@ const ArticleSchema = new mongoose.Schema({
     required: true
   },
   author: {
-    type: mongoose.Schema.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     required: true
   },
-  favorite: Boolean,
-  favoritesCount: {
+  fans: {
     type: Number,
     default: 0
   },
@@ -36,7 +43,7 @@ const ArticleSchema = new mongoose.Schema({
   updatedAt: Number,
 }, {
   timestamps: {
-    currentTime: ()=> Date.now()
+    currentTime: () => datetimeToUnix()
   }
 })
 

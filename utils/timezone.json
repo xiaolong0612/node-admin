@@ -1,0 +1,11 @@
+[
+  {
+    "label": "亚洲/上海",
+		"value": "Asia/Shanghai",
+    "lang": "zh_CN"
+	}, {
+    "label": "美国/多伦多",
+		"value": "America/Toronto",
+    "lang": "en_US"
+	}
+]

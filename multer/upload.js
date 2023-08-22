@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: Amber
  * @Date: 2023-08-13 03:28:20
- * @LastEditTime: 2023-08-15 12:07:39
+ * @LastEditTime: 2023-08-20 00:14:38
  * @LastEditors: Amber
  */
 // 引入配置好的 multerConfig
@@ -45,8 +45,22 @@ const hanldeImgDelAndRename = (id, filename, dirPath) => {
     }
   })
 }
-// 上传接口的 请求参数req  响应参数res
+// 上传头像接口的 请求参数req  响应参数res
 function uploadAvatar(req, res) {
+  return new Promise((resolve, reject) => {
+    multerConfig.single('file')(req, res, function (err) {
+      if (err) {
+        reject(err)
+      } else {
+        const img = req.file.filename.split('.')
+        // 重新返回符合规定的图片链接地址
+        resolve(`${req.assetsPath}/${img[0]}.${img[1]}`)
+      }
+    })
+  })
+}
+// 上传文件接口的 请求参数req  响应参数res
+function upload(req, res) {
   return new Promise((resolve, reject) => {
     multerConfig.single('file')(req, res, function (err) {
       if (err) {
@@ -61,5 +75,6 @@ function uploadAvatar(req, res) {
 }
 
 module.exports = {
-  uploadAvatar
+  uploadAvatar,
+  upload
 }

@@ -2,11 +2,11 @@
  * @Description: 
  * @Author: Amber
  * @Date: 2023-07-03 19:33:50
- * @LastEditTime: 2023-08-13 16:45:53
+ * @LastEditTime: 2023-08-20 15:14:55
  * @LastEditors: Amber
  */
-const { type } = require('express/lib/response')
 const mongoose = require('mongoose')
+const { datetimeToUnix } = require('../moment')
 
 const AdminSchema = new mongoose.Schema({
   avatar: {
@@ -44,7 +44,10 @@ const AdminSchema = new mongoose.Schema({
     type: Number
   }
 }, {
-  timestamps: { createdAt: 'createdAt', updatedAt: false }
+  timestamps: {
+    currentTime: () => datetimeToUnix(),
+    updatedAt: false
+  }
 })
 
 const AdminModel = mongoose.model('admins', AdminSchema)

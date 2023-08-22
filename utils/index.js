@@ -2,10 +2,16 @@
  * @Description: 
  * @Author: Amber
  * @Date: 2023-08-08 12:12:21
- * @LastEditTime: 2023-08-15 12:48:38
+ * @LastEditTime: 2023-08-22 13:04:11
  * @LastEditors: Amber
  */
+const path = require('path')
+
 module.exports = {
+  // 封装处理路径函数
+  handlePath: (dir) => {
+    return path.join(__dirname, '../', dir)
+  },
   /**
    * 随机字符串
    * @param {Number} length 
@@ -32,5 +38,11 @@ module.exports = {
     if (pwd.match(/[!@#$%^&*(),.?":{}|<>]/g)) level++
     if (pwd.length > 13) level++
     return level
+  },
+  /**
+   * object[] to object
+   */
+  objArrToObj: (list) => {
+    return list.reduce((obj, item) => (obj[item.key] = item.value,obj), {})
   }
 }

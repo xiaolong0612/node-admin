@@ -1,6 +1,12 @@
-const { type } = require('express/lib/response')
+/*
+ * @Description: 
+ * @Author: Amber
+ * @Date: 2023-07-04 00:32:48
+ * @LastEditTime: 2023-08-20 15:14:40
+ * @LastEditors: Amber
+ */
 const mongoose = require('mongoose')
-
+const { datetimeToUnix } = require('../moment')
 const RoleSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -18,8 +24,10 @@ const RoleSchema = new mongoose.Schema({
     type: Number
   }
 }, {
-  timestamps: { createdAt: 'createdAt', updatedAt: false }
-  // timestamps: true
+  timestamps: {
+    currentTime: () => datetimeToUnix(),
+    updatedAt: false
+  }
 })
 
 const RoleModel = mongoose.model('roles', RoleSchema)

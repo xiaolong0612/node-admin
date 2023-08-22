@@ -1,3 +1,10 @@
+/*
+ * @Description: 
+ * @Author: Amber
+ * @Date: 2023-06-30 01:02:10
+ * @LastEditTime: 2023-08-19 20:18:39
+ * @LastEditors: Amber
+ */
 const express = require('express');
 const router = express.Router();
 const ArticleModel = require('../models/ArticleModel')
@@ -5,30 +12,39 @@ const { checkTokenMiddleware } = require('../middleware/checkTokenMiddleware')
 const searchMiddleware = require('../middleware/searchMiddleware')
 
 router.get('/list', checkTokenMiddleware, searchMiddleware, function(req, res, next) {
-  const params = JSON.parse(req.query.params)
+  const params = req.query.params
+  console.log(req.filter)
   ArticleModel.aggregate([
     {
       $match: req.filter.length != 0 ? {$and: req.filter} : {}
     }, {
       "$lookup": {
-        "from": "users",
+        "from": "admins",
         "localField": "author",
         "foreignField": "_id",
-        "as": "user"
+        "as": "user",
+      }
+    }, { 
+      $replaceRoot: {
+        newRoot: {
+          $mergeObjects: [
+            {$arrayElemAt: [ "$user", 0 ]}, "$$ROOT"
+          ]
+        }
       }
     }, {
       $project: {
         _id: 1,
         title: 1,
+        author: 1,
         description: 1,
         body: 1,
-        favorite: 1,
-        favoritesCount: 1,
+        fans: 1,
         tagList: 1,
         createdAt: 1,
         updatedAt: 1,
-        "user.username": 1,
-        "user.avatar": 1
+        username: 1,
+        avatar: 1
       }
     }, {
       $skip: params.limit * (params.page - 1)
@@ -39,7 +55,7 @@ router.get('/list', checkTokenMiddleware, searchMiddleware, function(req, res, n
     const total =  await ArticleModel.find(req.filter.length != 0 ? {$and: req.filter} : {}).count()
     res.json({
       code: 20000,
-      msg: '成功',
+      msg: '查询成功',
       data: {
         list: data,
         total
