@@ -9,6 +9,7 @@ const AdminModel = require('../models/AdminModel')
 const RoleModel = require('../models/RoleModel')
 const { checkTokenMiddleware } = require('../middleware/checkTokenMiddleware')
 const searchMiddleware = require('../middleware/searchMiddleware')
+const i18n = require('../middleware/i18nMiddleware')
 const { datetimeToUnix } = require('../moment')
 
 router.post('/login', function(req, res, next) {
@@ -39,7 +40,7 @@ router.post('/login', function(req, res, next) {
     res.setHeader('Access-Control-Expose-Headers','authorization')
     res.json({
       code: 20000,
-      msg: '登陆成功',
+      msg: i18n(req, 'loginSuccess'),
       data: { 
         _id: result._id,
         username: result.username,

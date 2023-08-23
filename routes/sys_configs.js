@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: Amber
  * @Date: 2023-08-20 13:23:12
- * @LastEditTime: 2023-08-22 16:38:30
+ * @LastEditTime: 2023-08-23 23:01:32
  * @LastEditors: Amber
  */
 const express = require('express');
@@ -42,7 +42,6 @@ router.patch('/', checkTokenMiddleware, async (req, res, next) => {
   async function update(){
     const key = keys[index]
     const val = req.body[key]
-    console.log(key, val)
     const haskey = await ConfigModel.findOne({key: key})
     if(haskey) await ConfigModel.updateOne({key: key}, {value: val})
     else await ConfigModel.create({key: key, value: val})
@@ -58,15 +57,6 @@ router.patch('/', checkTokenMiddleware, async (req, res, next) => {
     }
   }
   update(index)
-  // Object.keys(req.body).map(async key => {
-  //   const haskey = await ConfigModel.findOne({key: key})
-  //   if(haskey) await ConfigModel.updateOne({key: key}, {value: req.body[key]})
-  //   else await ConfigModel.create({key: key}, {value: req.body[key]})
-  // })
-  // res.json({
-  //   code: 20000,
-  //   msg: '更新成功'
-  // })
 });
 
 module.exports = router;
