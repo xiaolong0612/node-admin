@@ -11,11 +11,13 @@ const { checkTokenMiddleware } = require('../middleware/checkTokenMiddleware')
 const searchMiddleware = require('../middleware/searchMiddleware')
 const i18n = require('../middleware/i18nMiddleware')
 const { datetimeToUnix } = require('../moment')
+const { adminLogs } = require('../logs')
 
 router.post('/login', function(req, res, next) {
   const { username, password } = req.body
   AdminModel.findOne({username: username}).then(async result => {
     if(result.password != md5(`${password}${result.salt}`)){
+      adminLogs.error('密码错误', {user: username, req})
       return res.json({
         code: 20001,
         msg: '账号或密码错误'
@@ -23,6 +25,7 @@ router.post('/login', function(req, res, next) {
     }
     const hasPermission = await RoleModel.findOne({title: result.role, status: 1})
     if(!hasPermission){
+      adminLogs.warn('越权访问', {user: username, req})
       return res.json({
         code: 20001,
         msg: '暂无权限访问'
@@ -38,6 +41,7 @@ router.post('/login', function(req, res, next) {
     }, secret, { expiresIn: 60 * 60 })
     res.setHeader('authorization', token)
     res.setHeader('Access-Control-Expose-Headers','authorization')
+    adminLogs.info('登陆成功', {user: username, req})
     res.json({
       code: 20000,
       msg: i18n(req, 'loginSuccess'),
@@ -49,6 +53,7 @@ router.post('/login', function(req, res, next) {
       }
     })
   }).catch(() => {
+    adminLogs.warn('登陆异常', {user: username, req})
     res.json({
       code: 20001,
       msg: '账号或密码错误'

@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: Amber
  * @Date: 2023-06-30 01:02:10
- * @LastEditTime: 2023-08-19 20:18:39
+ * @LastEditTime: 2023-08-25 14:27:58
  * @LastEditors: Amber
  */
 const express = require('express');
@@ -13,7 +13,6 @@ const searchMiddleware = require('../middleware/searchMiddleware')
 
 router.get('/list', checkTokenMiddleware, searchMiddleware, function(req, res, next) {
   const params = req.query.params
-  console.log(req.filter)
   ArticleModel.aggregate([
     {
       $match: req.filter.length != 0 ? {$and: req.filter} : {}

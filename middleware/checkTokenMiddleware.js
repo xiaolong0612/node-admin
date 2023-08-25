@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: Amber
  * @Date: 2023-06-29 18:33:09
- * @LastEditTime: 2023-08-20 15:47:16
+ * @LastEditTime: 2023-08-25 01:14:50
  * @LastEditors: Amber
  */
 const jwt = require('jsonwebtoken')
@@ -53,7 +53,6 @@ module.exports = {
         code: 50008,
         msg: '您没有权限操作'
       })
-      
     })
   }
 }

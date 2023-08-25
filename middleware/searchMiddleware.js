@@ -2,9 +2,16 @@
  * @Description: 
  * @Author: Amber
  * @Date: 2023-06-29 23:34:48
- * @LastEditTime: 2023-08-19 02:39:34
+ * @LastEditTime: 2023-08-25 18:41:56
  * @LastEditors: Amber
  */
+
+function getBetweenVal(type, arr){
+  if(type == 'BETWEEN_DATE') {
+    return {one: new Date(arr[0]), two: new Date(arr[1])}
+  }
+  else return {one: Number(arr[0]), two: Number(arr[1])}
+}
 module.exports = (req, res, next) => {
   const filter = []
   const params = req.query.params
@@ -24,12 +31,13 @@ module.exports = (req, res, next) => {
         filter.push({
           ...temp
         })
-      } else if (op[key] == 'BETWEEN' && params[key] && params[key].length != 0) {
-        temp[key] = {$gte: Number(params[key][0])}
+      } else if (op[key].includes('BETWEEN') && params[key] && params[key].length != 0) {
+        const { one, two } = getBetweenVal(op[key], params[key])
+        temp[key] = {$gte: one}
         filter.push({
           ...temp
         })
-        temp[key] = {$lte: Number(params[key][1])}
+        temp[key] = {$lte: two}
         filter.push({
           ...temp
         })

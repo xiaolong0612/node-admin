@@ -2,7 +2,7 @@ const db = require('./db')
 
 module.exports = function () {
   return new Promise((resolve, reject) => {
-    db().then(() => {
+    db.connect().then(() => {
       console.log('数据库连接成功...')
       resolve()
     }).catch(() => {

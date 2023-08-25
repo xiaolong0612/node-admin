@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: Amber
  * @Date: 2023-08-08 12:12:21
- * @LastEditTime: 2023-08-22 13:04:11
+ * @LastEditTime: 2023-08-25 01:59:43
  * @LastEditors: Amber
  */
 const path = require('path')
@@ -44,5 +44,22 @@ module.exports = {
    */
   objArrToObj: (list) => {
     return list.reduce((obj, item) => (obj[item.key] = item.value,obj), {})
+  },
+  /**
+   * 
+   * @param {*} req 
+   * @returns 客户端真实ip
+   */
+  getClientIp: (req) => {
+    var ip = req.headers['x-forwarded-for'] ||
+        req.ip ||
+        req.connection.remoteAddress ||
+        req.socket.remoteAddress ||
+        req.connection.socket.remoteAddress || '';
+    if(ip.split(',').length>0){
+        ip = ip.split(',')[0]
+    }
+    ip = ip.substr(ip.lastIndexOf(':')+1,ip.length);
+    return ip;  
   }
 }

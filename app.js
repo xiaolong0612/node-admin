@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: Amber
  * @Date: 2023-06-28 16:15:16
- * @LastEditTime: 2023-08-23 20:38:37
+ * @LastEditTime: 2023-08-25 12:01:00
  * @LastEditors: Amber
  */
 var createError = require('http-errors');
@@ -25,6 +25,7 @@ var articlesRouter = require('./routes/articles');
 var sysConfigRouter = require('./routes/sys_configs');
 var uploadRouter = require('./routes/upload');
 var i18nRouter = require('./routes/i18n');
+var logsRouter = require('./routes/logs');
 
 // const redisClient= require('./utils/redis')
 // redisClient.set('test-key-1', 'test-value-1')
@@ -52,8 +53,7 @@ app.use('/articles', articlesRouter);
 app.use('/sysConfig', sysConfigRouter);
 app.use('/upload', uploadRouter);
 app.use('/i18n', i18nRouter);
-
-
+app.use('/logs', logsRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
