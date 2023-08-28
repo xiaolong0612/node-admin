@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: Amber
  * @Date: 2023-06-29 18:33:09
- * @LastEditTime: 2023-08-25 01:14:50
+ * @LastEditTime: 2023-08-27 23:11:50
  * @LastEditors: Amber
  */
 const jwt = require('jsonwebtoken')
@@ -12,6 +12,15 @@ const { datetimeToUnix } = require('../moment')
 
 module.exports = {
   checkTokenMiddleware: (req, res, next) => {
+    // 可以用来验证操作权限
+    if(!req.headers['page-view']){
+      return res.json({
+        code: 50008,
+        msg: '您没有权限操作哦！！！'
+      })
+      // 验证、增删改查
+      // console.log(req.method)
+    }
     const token = req.headers['authorization']
     if(!token){
       return res.json({

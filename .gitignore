@@ -130,3 +130,5 @@ dist
 .pnp.*
 
 public/uploads
+
+db/db copy.js

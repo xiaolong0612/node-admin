@@ -2,17 +2,17 @@
  * @Description: 
  * @Author: Amber
  * @Date: 2023-06-28 18:37:12
- * @LastEditTime: 2023-08-24 21:36:38
+ * @LastEditTime: 2023-08-28 22:47:53
  * @LastEditors: Amber
  */
 
 const mongoose = require('mongoose');
 
-const IP = '124.71.153.68'
-const PORT = '27017'
-const DB_NAME = 'amber_com'
-const username = 'amber_com'
-const password = 'ZCFxwGbkR7GtKRSy'
+const IP = ''
+const PORT = ''
+const DB_NAME = ''
+const username = ''
+const password = ''
 
 module.exports = {
   uri: `mongodb://${username}:${password}@${IP}:${PORT}/${DB_NAME}`,

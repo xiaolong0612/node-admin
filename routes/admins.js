@@ -11,7 +11,7 @@ const { checkTokenMiddleware } = require('../middleware/checkTokenMiddleware')
 const searchMiddleware = require('../middleware/searchMiddleware')
 const i18n = require('../middleware/i18nMiddleware')
 const { datetimeToUnix } = require('../moment')
-const { adminLogs } = require('../logs')
+const { adminLogs } = require('../logger')
 
 router.post('/login', function(req, res, next) {
   const { username, password } = req.body
